@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/public/images/favicon.ico">
+    
+    <title>Arch Linux ARM</title>
+    
+    <link rel="stylesheet" type="text/css" href="/public/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/public/css/jquery.smartmenus.bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/public/css/custom.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/public/css/dataTables.bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/public/css/default.min.css"/>
+    
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script type="text/javascript" src="/public/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/public/js/ie10-viewport-bug-workaround.js"></script>
+    <script type="text/javascript" src="/public/js/jquery.smartmenus.min.js"></script>
+    <script type="text/javascript" src="/public/js/jquery.smartmenus.bootstrap.min.js"></script>
+    <script type="text/javascript" src="/public/js/datatables.min.js"></script>
+    <script type="text/javascript" src="/public/js/dataTables.bootstrap.min.js"></script>
+    <script type="text/javascript" src="/public/js/highlight.pack.js"></script>
+    <script type="text/javascript" src="/public/js/bootstrap-typeahead.min.js"></script>
+    <script>hljs.configure({languages: []});hljs.initHighlightingOnLoad();</script>
+    <script type="text/javascript" src="/public/js/date.format.min.js"></script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/"><img src="/public/images/alarm.png"></a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav sm">
+                    <li><a href="/about">About</a>
+                      <ul class="dropdown-menu">
+                    <li><a href="/about/contact">Contact</a></li>
+                    <li><a href="/about/donate">Donate</a></li>
+                    <li><a href="/about/downloads">Downloads</a></li>
+                    <li><a href="/about/mirrors">Mirrors</a></li>
+                    <li><a href="/about/package-signing">Package Signing</a></li>
+                      </ul>
+                    </li>
+                    <li><a href="/platforms">Platforms</a>
+                      <ul class="dropdown-menu">
+                    <li><a href="/platforms/armv5">ARMv5</a>
+                      <ul class="dropdown-menu">
+                    <li><a href="/platforms/armv5/arietta-g25">Arietta G25</a></li>
+                    <li><a href="/platforms/armv5/guruplug-display">Guruplug Display</a></li>
+                    <li><a href="/platforms/armv5/olinuxino">OLinuXino</a></li>
+                    <li><a href="/platforms/armv5/openrd">OpenRD</a></li>
+                    <li><a href="/platforms/armv5/pogoplug-series-4">Pogoplug Series 4</a></li>
+                    <li><a href="/platforms/armv5/pogoplug-v2-pinkgray">Pogoplug v2 (Pink/Gray)</a></li>
+                    <li><a href="/platforms/armv5/seagate-dockstar">Seagate DockStar</a></li>
+                    <li><a href="/platforms/armv5/seagate-goflex-home">Seagate GoFlex Home</a></li>
+                    <li><a href="/platforms/armv5/seagate-goflex-net">Seagate GoFlex Net</a></li>
+                    <li><a href="/platforms/armv5/sheevaplug">SheevaPlug</a></li>
+                    <li><a href="/platforms/armv5/tonidoplug">TonidoPlug</a></li>
+                    <li><a href="/platforms/armv5/tonidoplug-2">TonidoPlug 2</a></li>
+                    <li><a href="/platforms/armv5/zyxel-nsa320">ZyXEL NSA320</a></li>
+                    <li><a href="/platforms/armv5/zyxel-nsa325">ZyXEL NSA325</a></li>
+                      </ul>
+                    </li>
+                    <li><a href="/platforms/armv6">ARMv6</a>
+                      <ul class="dropdown-menu">
+                    <li><a href="/platforms/armv6/raspberry-pi">Raspberry Pi</a></li>
+                      </ul>
+                    </li>
+                    <li><a href="/platforms/armv7">ARMv7</a>
+                      <ul class="dropdown-menu">
+                    <li><a href="/platforms/armv7/allwinner">AllWinner</a>
+                      <ul class="dropdown-menu">
+                    <li><a href="/platforms/armv7/allwinner/a10-olinuxino-lime">A10 OlinuXino Lime</a></li>
+                    <li><a href="/platforms/armv7/allwinner/a20-olinuxino-lime">A20 OlinuXino Lime</a></li>
+                    <li><a href="/platforms/armv7/allwinner/a20-olinuxino-lime2">A20 OlinuXino Lime2</a></li>
+                    <li><a href="/platforms/armv7/allwinner/a20-olinuxino-micro">A20 OlinuXino Micro</a></li>
+                    <li><a href="/platforms/armv7/allwinner/cubieboard">Cubieboard</a></li>
+                    <li><a href="/platforms/armv7/allwinner/cubieboard-2">Cubieboard 2</a></li>
+                    <li><a href="/platforms/armv7/allwinner/cubietruck">Cubietruck</a></li>
+                    <li><a href="/platforms/armv7/allwinner/pcduino3">pcDuino3</a></li>
+                      </ul>
+                    </li>
+                    <li><a href="/platforms/armv7/amlogic">Amlogic</a>
+                      <ul class="dropdown-menu">
+                    <li><a href="/platforms/armv7/amlogic/odroid-c1">ODROID-C1</a></li>
+                      </ul>
+                    </li>
+                    <li><a href="/platforms/armv7/arm">ARM</a>
+                      <ul class="dropdown-menu">
+                    <li><a href="/platforms/armv7/arm/versatile-express">Versatile Express</a></li>
+                      </ul>
+                    </li>
+                    <li><a href="/platforms/armv7/broadcom">Broadcom</a>
+                      <ul class="dropdown-menu">
+                    <li><a href="/platforms/armv7/broadcom/raspberry-pi-2">Raspberry Pi 2</a></li>
+                      </ul>
+                    </li>
+                    <li><a href="/platforms/armv7/freescale">Freescale</a>
+                      <ul class="dropdown-menu">
+                    <li><a href="/platforms/armv7/freescale/cubox-i">CuBox-i</a></li>
+                    <li><a href="/platforms/armv7/freescale/nitrogen6x">Nitrogen6X</a></li>
+                    <li><a href="/platforms/armv7/freescale/udoo">UDOO</a></li>
+                    <li><a href="/platforms/armv7/freescale/usb-armory">USB Armory</a></li>
+                    <li><a href="/platforms/armv7/freescale/utilite">Utilite</a></li>
+                    <li><a href="/platforms/armv7/freescale/wandboard">Wandboard</a></li>
+                      </ul>
+                    </li>
+                    <li><a href="/platforms/armv7/marvell">Marvell</a>
+                      <ul class="dropdown-menu">
+                    <li><a href="/platforms/armv7/marvell/clearfog">ClearFog</a></li>
+                    <li><a href="/platforms/armv7/marvell/cubox">CuBox</a></li>
+                    <li><a href="/platforms/armv7/marvell/d3plug">D3Plug</a></li>
+                    <li><a href="/platforms/armv7/marvell/mirabox">Mirabox</a></li>
+                    <li><a href="/platforms/armv7/marvell/smile-plug">SMILE Plug</a></li>
+                      </ul>
+                    </li>
+                    <li><a href="/platforms/armv7/nvidia">nVidia</a>
+                      <ul class="dropdown-menu">
+                    <li><a href="/platforms/armv7/nvidia/trimslice">TrimSlice</a></li>
+                      </ul>
+                    </li>
+                    <li><a href="/platforms/armv7/rockchip">Rockchip</a>
+                      <ul class="dropdown-menu">
+                    <li><a href="/platforms/armv7/rockchip/asus-chromebit-cs10">Asus Chromebit CS10</a></li>
+                    <li><a href="/platforms/armv7/rockchip/asus-chromebook-flip-c100p">Asus Chromebook Flip C100P</a></li>
+                    <li><a href="/platforms/armv7/rockchip/hisense-chromebook-c11">Hisense Chromebook C11</a></li>
+                      </ul>
+                    </li>
+                    <li><a href="/platforms/armv7/samsung">Samsung</a>
+                      <ul class="dropdown-menu">
+                    <li><a href="/platforms/armv7/samsung/odroid-u2">ODROID-U2</a></li>
+                    <li><a href="/platforms/armv7/samsung/odroid-u3">ODROID-U3</a></li>
+                    <li><a href="/platforms/armv7/samsung/odroid-x">ODROID-X</a></li>
+                    <li><a href="/platforms/armv7/samsung/odroid-x2">ODROID-X2</a></li>
+                    <li><a href="/platforms/armv7/samsung/odroid-xu">ODROID-XU</a></li>
+                    <li><a href="/platforms/armv7/samsung/odroid-xu3">ODROID-XU3</a></li>
+                    <li><a href="/platforms/armv7/samsung/odroid-xu4">ODROID-XU4</a></li>
+                    <li><a href="/platforms/armv7/samsung/samsung-chromebook">Samsung Chromebook</a></li>
+                    <li><a href="/platforms/armv7/samsung/samsung-chromebook-2">Samsung Chromebook 2</a></li>
+                      </ul>
+                    </li>
+                    <li><a href="/platforms/armv7/ti">TI</a>
+                      <ul class="dropdown-menu">
+                    <li><a href="/platforms/armv7/ti/beagleboard">BeagleBoard</a></li>
+                    <li><a href="/platforms/armv7/ti/beagleboard-xm">BeagleBoard-xM</a></li>
+                    <li><a href="/platforms/armv7/ti/beaglebone">BeagleBone</a></li>
+                    <li><a href="/platforms/armv7/ti/beaglebone-black">BeagleBone Black</a></li>
+                    <li><a href="/platforms/armv7/ti/chiliboard">ChiliBoard</a></li>
+                    <li><a href="/platforms/armv7/ti/pandaboard">PandaBoard</a></li>
+                      </ul>
+                    </li>
+                    <li><a href="/platforms/armv7/xilinx">Xilinx</a>
+                      <ul class="dropdown-menu">
+                    <li><a href="/platforms/armv7/xilinx/zedboard">ZedBoard</a></li>
+                      </ul>
+                    </li>
+                      </ul>
+                    </li>
+                    <li><a href="/platforms/armv8">ARMv8</a>
+                      <ul class="dropdown-menu">
+                    <li><a href="/platforms/armv8/amlogic">Amlogic</a>
+                      <ul class="dropdown-menu">
+                    <li><a href="/platforms/armv8/amlogic/odroid-c2">ODROID-C2</a></li>
+                      </ul>
+                    </li>
+                    <li><a href="/platforms/armv8/arm">ARM</a>
+                      <ul class="dropdown-menu">
+                    <li><a href="/platforms/armv8/arm/juno">Juno</a></li>
+                      </ul>
+                    </li>
+                    <li><a href="/platforms/armv8/broadcom">Broadcom</a>
+                      <ul class="dropdown-menu">
+                    <li><a href="/platforms/armv8/broadcom/raspberry-pi-3">Raspberry Pi 3</a></li>
+                      </ul>
+                    </li>
+                    <li><a href="/platforms/armv8/generic">Generic</a></li>
+                      </ul>
+                    </li>
+                      </ul>
+                    </li>
+                    <li><a href="/packages">Packages</a></li>
+                    <li><a href="/forum">Forum</a></li>
+                    <li><a href="/wiki">Wiki</a></li>
+          </ul>
+          
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a href="/login"><img src="/public/images/GitHub-Mark-16px.png">&nbsp;Sign In</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <ul>
+<li>These instructions will create a dual-booting environment where you can switch between booting Arch Linux ARM and the stock ChromeOS.  No changes are made to the internal eMMC drive, and your new Arch Linux ARM install will run completely from external storage.  This is the recommended setup for those that just want to take a test drive, or don't want to give up ChromeOS.</li>
+<li>You must be running the latest ChromeOS prior to installation.</li>
+</ul>
+
+<h2 id="switchtodevelopermode">Switch to developer mode</h2>
+
+<ol><li>Turn off the laptop.
+<li>To invoke Recovery mode, you hold down the ESC and Refresh keys and poke the Power button.
+<li>At the Recovery screen press Ctrl-D (there's no prompt - you have to know to do it).
+<li>Confirm switching to developer mode by pressing enter, and the laptop will reboot and reset the system.  This takes about 15-20 minutes.
+</ol>
+
+<p><b>Note:</b> After enabling developer mode, you will need to press Ctrl-D each time you boot, or wait 30 seconds to continue booting.</p>
+
+<h2 id="enablebootingfromexternalstoragepre">Enable booting from external storage</pre></h2>
+
+<ol><li>After booting into developer mode, hold Ctrl and Alt and poke the T key.  This will open up the crosh shell.
+<li>Type <i>shell</i> to get into a bash shell.
+<li>Type <i>sudo su</i> to become root.
+<li>Then type this to enable USB booting:<pre>crossystem dev_boot_usb=1 dev_boot_signed_only=0</pre>
+<li>Reboot the system to allow the change to take effect.
+</ol>
+
+<h2 id="createarootusborsdfordualbooting">Create a root USB or SD for dual booting</h2>
+
+<p><div id="install-instructions">
+These instructions are written for installing to a USB drive with the <i>sda</i> device, assuming no other USB drives are plugged in.  For an SD card, <a id="myLink" href="#" onclick="document.getElementById('install-instructions').innerHTML = document.getElementById('install-instructions').innerHTML.replace(/\/dev\/sda([0-9]+)/g, '/dev/mmcblk1p$1'); document.getElementById('install-instructions').innerHTML = document.getElementById('install-instructions').innerHTML.replace(/\/dev\/sda/g, '/dev/mmcblk1'); return false;">click here</a> to magically adjust the instructions for the <i>mmcblk1</i> device that an SD card will register as.</p>
+
+<ol><li>Get a root shell as described in the previous section.
+<li>Since ChromeOS will automatically mount any partitions it finds, unmount everything now:
+<pre>umount /dev/sda*</pre>
+<li>Start fdisk to create a GPT partition table:
+<pre>fdisk /dev/sda</pre>
+<li>At the fdisk prompt:
+<ol style="list-style-type: lower-alpha"><li>Type <b>g</b>. This will create a new empty GPT partition table.
+<li>Write the partition table and exit by typing <b>w</b>.</ol>
+<li>Partition the micro SD card:
+<pre>cgpt create /dev/sda
+cgpt add -i 1 -t kernel -b 8192 -s 32768 -l Kernel -S 1 -T 5 -P 10 /dev/sda</pre>
+<li>To create the rootfs partition, we first need to calculate how big to make the partition using information from <i>cgpt show</i>.  Look for the number under the <i>start</i> column for <i>Sec GPT table</i> which is 15633375 in this example:
+<pre>localhost / # cgpt show /dev/sda
+       start        size    part  contents
+           0           1          PMBR
+           1           1          Pri GPT header
+        8192       32768      1   Label: "Kernel"
+                                  Type: ChromeOS kernel
+                                  UUID: E3DA8325-83E1-2C43-BA9D-8B29EFFA5BC4
+                                  Attr: priority=10 tries=5 successful=1<br>
+    15633375          32          Sec GPT table
+    15633407           1          Sec GPT header</pre>
+<li>Replace the xxxxx string in the following command with that number to create the root partition:
+<pre>cgpt add -i 2 -t data -b 40960 -s `expr xxxxx - 40960` -l Root /dev/sda</pre>
+<li>Tell the system to refresh what it knows about the disk partitions:
+<pre>sfdisk -R /dev/sda</pre>
+<li>Format the root partition:
+<pre>mkfs.ext4 /dev/sda2</pre>
+<li>Download and extract rootfs tarball:
+<pre>cd /tmp
+wget http://os.archlinuxarm.org/os/ArchLinuxARM-peach-latest.tar.gz
+mkdir root
+mount /dev/sda2 root
+tar -xf ArchLinuxARM-peach-latest.tar.gz -C root</pre>
+<li>Flash the kernel to the kernel partition:
+<pre>dd if=root/boot/vmlinux.kpart of=/dev/sda1</pre>
+<li>Unmount the root partition:
+<pre>umount root
+sync</pre>
+<li>Reboot the computer.
+<li>At the splash screen, instead of pressing Ctrl-D to go to CromeOS, press Ctrl-U to boot to the external drive.
+<li>After logging in as root (password is "root"), you can connect to a wireless network by running:<pre>wifi-menu</pre>
+</ol>
+
+      <hr>
+      <p class="small text-center text-muted">Copyright ©2009-2016 Arch Linux ARM<br>
+      The registered trademark Linux® is used pursuant to a sublicense from LMI, the exclusive licensee of Linus Torvalds, owner of the mark on a world-wide basis.<br>
+      The Arch Linux™ name and logo are used under permission of the Arch Linux Project Lead.<br></p>
+    </div>
+
+  </body>
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-24579207-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+</html>
