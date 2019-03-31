@@ -1,6 +1,8 @@
 #!/bin/bash
 
 
+### Sessions init and arguments capture.
+# Very weird Bash structure here for getopts. Keep as-is. No touchy.
 function session_init {
     session_id=$(< /dev/urandom tr -dc 0-9 | head -c6)
     mount_path="/mnt/.alARM_install_${session_id}"
@@ -23,20 +25,51 @@ function _print_help_and_exit {
 }
 
 
-function parse_args {
-    while getopts "hvd:b:m:" opt; do
-        case $opt in
-            h) _print_help_and_exit;;
-            v) debug_mode="${OPTARG}";;
-            d) img_path="${OPTARG}";;
-            b) install_disk="${OPTARG}";;
-            m) board_model="${OPTARG}";;
-            \?)
-                echo "Unsupported argument chosen: -${OPTARG}" >&2
-                _print_help_and_exit;;
-        esac
-    done
+function _empty_optarg_exit {
+    if [ -z ${2} ]; then
+        echo "Argument -${1} requires a value"; >&2
+        _print_help_and_exit
+    fi
 }
+
+
+while getopts "hvd:b:m:" opt; do
+    case $opt in
+        h)
+            _print_help_and_exit
+            ;;
+        v)
+            debug_mode="True"
+            ;;
+        d)
+            _empty_optarg_exit "${opt}" "${OPTARG}"
+            img_path="${OPTARG}"
+            check[0]="d"
+            ;;
+        b)
+            _empty_optarg_exit "${opt}" "${OPTARG}"
+            install_disk="${OPTARG}"
+            check[1]="b"
+            ;;
+        m)
+            _empty_optarg_exit "${opt}" "${OPTARG}"
+            board_model="${OPTARG}"
+            check[2]="m"
+            ;;
+        \?)
+            echo "Unsupported argument chosen: -${OPTARG}" >&2
+            _print_help_and_exit
+            ;;
+    esac
+done
+
+if [ "${check[*]}" != "d b m" ]; then
+    echo "All 3 arguments -b, -d, -m are required"
+    exit 1;
+fi
+
+session_init
+###
 
 
 ### Logging functions
@@ -46,7 +79,7 @@ function current_timestamp {
 
 
 function _logging {
-    ## Take 2 positioned parameters.
+    ## Take 2 positional parameters.
     ## ${1} for loglevel: info, warning, error, debug
     ## ${2} for log messages
     ##
@@ -78,19 +111,21 @@ function _logging {
 
 
 function logging_info {
-    ## Take 1 positioned parameter.
+    ## Take 1 positional parameter.
     ## ${1} for log message.
     _logging "INFO" "${1}"
 }
 
 
 function logging_warning {
+    ## Take 1 positional parameter.
+    ## ${1} for log message.
     _logging "WARNING" ${1}
 }
 
 
 function logging_ERROR {
-    ## Take 1 positioned parameter.
+    ## Take 1 positional parameter.
     ## ${1} for log message.
     ##
     ## This function will cause the program to exit.
@@ -99,7 +134,7 @@ function logging_ERROR {
 
 
 function logging_DEBUG {
-    ## Take 1 positioned parameter.
+    ## Take 1 positional parameter.
     ## ${1} for log message.
     _logging "DEBUG" ${1}
 }
@@ -108,16 +143,13 @@ function logging_DEBUG {
 
 ### Templating functions.
 function _disk_template_cubieboard2 {
-    ## Take 1 positioned parameter.
+    ## Take 1 positional parameter.
     ## ${1} for ${install_disk}
     ##
     ## NOTE: This function requires sudo.
 
-    # This is an internal function. It should use positioned parameter
+    # This is an internal function. It should use positional parameter
     # instead of referring directly to a program-wide variable.
-
-    logging_info "Formating ${1} using template for:"
-    logging_info "cubieboard2 || xu4 || "
 
     # One partition for whole disk. Make it ext4.
     (echo o; \
@@ -128,23 +160,24 @@ function _disk_template_cubieboard2 {
      echo ; \
      echo w) \
     | fdisk ${1} > /dev/null 2>&1
+    logging_info "Formated ${1} using template for:"
+    logging_info "cubieboard2 || xu4 "
 
-    logging_info "Creating filesystem for ${1}1 & mounting"
     mkfs.ext4 -F "${1}1" > /dev/null 2>&1
+    mkdir -p "${mount_path}/root"
     mount "${1}1" "${mount_path}/root"
+    logging_info "Created filesystem & mounted ${1}1 to ${mount_path}/root"
+
 }
 
 
 function _disk_template_rpi {
-    ## Take 1 positioned parameter.
+    ## Take 1 positional parameter.
     ## ${1} for ${install_disk}
     ##
     ## NOTE: This function requires sudo.
 
-    logging_info "Formating ${1} using template for:"
-    logging_info "rpi || rpi2 ||"
-
-    # Two partions. Make one vfat for /boot, the other ext4 for /root
+    # Two partitions. Make one vfat for /boot, the other ext4 for /root
     (echo o; \
      echo n; \
      echo p; \
@@ -160,14 +193,19 @@ function _disk_template_rpi {
      echo ; \
      echo w) \
     | fdisk ${1} > /dev/null 2>&1
+    logging_info "Formated ${1} using template for:"
+    logging_info "rpi || rpi2"
 
-    logging_info "Creating filesystem for ${1}1 & mounting"
     mkfs.vfat "${1}1" > /dev/null 2>&1
+    mkdir -p "${mount_path}/boot"
     mount "${1}1" "${mount_path}/boot"
+    logging_info "Created filesystem & mounted ${1}1 to ${mount_path}/boot"
 
-    logging_info "Creating filesystem for ${1}2 & mounting"
     mkfs.ext4 -F "${1}2" > /dev/null 2>&1
+    mkdir -p "${mount_path}/root"
     mount "${1}2" "${mount_path}/root"
+    logging_info "Created filesystem & mounted ${1}2 to ${mount_path}/root"
+
 }
 
 
@@ -184,28 +222,27 @@ function _post_install_template_cubieboard2 {
 
 
 function _post_install_template_xu4 {
-    logging_info "=== Setting up bootloader for ${board_model}"
     cd "${mount_path}/root/boot"
     sh ./sd_fusing.sh "${install_disk}"
     cd
     sync
+    logging_info "Set up bootloader for ${board_model}"
 }
 
 function _post_install_template_rpi {
-
-    logging_info "=== Setting up bootloader for ${board_model}"
     mv "${mount_path}/root/boot/*" "${mount_path}/boot/"
     sync
+    logging_info "Set up bootloader for ${board_model}"
 }
 
 function wipe_disk {
-    ## Take 1 positioned parameter.
+    ## Take 1 positional parameter.
     ## ${1} for ${install_disk}
     ##
     ## NOTE: This function requires sudo.
 
-    logging_info "Wiping out ${1} with /dev/zero"
     dd if=/dev/zero of=${1} bs=1M count=8 status=none
+    logging_info "Wiped out ${1} with /dev/zero"
 }
 
 
@@ -257,6 +294,7 @@ function install_img {
     logging_info "Extracting ${img} to ${mount_path}/root"
     bsdtar -xpf "${img}" -C "${mount_path}/root"
     sync
+    logging_info "Extracted ${img} to ${mount_path}/root"
 }
 
 
@@ -282,7 +320,7 @@ function post_install {
 
 function clean_up {
 
-    echo "Cleaning up ${mount_path}"
+    logging_info "Cleaning up ${mount_path}"
     umount "${mount_path}/boot" > /dev/null 2>&1
     umount "${mount_path}/root" > /dev/null 2>&1
     rmdir "${mount_path}/boot"
@@ -293,8 +331,6 @@ function clean_up {
 
 
 function main {
-    session_init
-    parse_args
     select_img
     format_disk
     install_img
