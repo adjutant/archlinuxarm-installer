@@ -1,0 +1,404 @@
+#!/bin/bash
+
+
+### Sessions init and arguments capture.
+# Very weird Bash structure here for getopts.  Keep as-is.  No touchy.
+function _print_help_and_exit {
+    echo -e "archlinuxARM-installer version 0.2 \n
+`           `archlinuxARM-installer is the tool to install ArchLinuxARM \
+`           `automatically \non supported devices.  It was designed primarily \
+`           `to assist with the \ninstallation of ARM clusters. \n
+`           `Usage: archlinuxARM-installer [OPTION] \n
+`           `Options:
+`           ` -h      print out this help message
+`           ` -v      activate debug log (true/false)
+`           ` -d      path to ArchLinuxARM image directory
+`           ` -b      path to block device to be installed (/dev/sdX)
+`           ` -m      board model name"
+    exit 2
+}
+
+
+while getopts "hvd:b:m:t:" opt; do
+    # "hvd:b:m:" is Bash majik. The following ": seems to means
+    # that the parameter requires an argument.
+    case $opt in
+        h)
+            _print_help_and_exit
+            ;;
+        v)
+            debug_mode="True"
+            ;;
+        d)
+            img_path="${OPTARG}"
+            required_parameter_check[1]="d"
+            ;;
+        b)
+            install_disk="${OPTARG}"
+            required_parameter_check[0]="b"
+            ;;
+        m)
+            board_model="${OPTARG}"
+            required_parameter_check[2]="m"
+            ;;
+        t)
+            echo "testing ${OPTARG}"
+            ;;
+        \?)
+            echo "Unsupported argument chosen: -${OPTARG}" >&2
+            _print_help_and_exit
+            ;;
+    esac
+done
+
+
+if [ "${required_parameter_check[*]}" != "b d m" ]; then
+    echo "All 3 parameters -b, -d, -m are required"
+    _print_help_and_exit
+fi
+
+session_id=$(< /dev/urandom tr -dc 0-9 | head -c6)
+mount_path="/mnt/.alARM_install_${session_id}"
+###
+
+
+### Logging functions
+function current_timestamp {
+    $(which date) +"%d-%m-%Y, %H:%M:%S"
+}
+
+
+function _logging {
+    ## Take 2 positional arguments.
+    ## ${1} for loglevel: info, warning, error, debug
+    ## ${2} for log messages
+    ##
+    ## ${1} ${2} MUST always be wrapped in double quotes.
+    ## Env variable ${debug_mode} is checked for debug log printing.
+    ## Loglevel ERROR will cause the program to exit.
+    case ${1} in
+        "info"|"INFO")
+            echo "[$(current_timestamp)] INFO: ${2}"
+            ;;
+        "warning"|"WARNING")
+            echo "[$(current_timestamp)] WARNING: ${2}"
+            ;;
+        "error"|"ERROR")
+            echo "[$(current_timestamp)] ERROR: ${2}"
+            exit 1
+            ;;
+        "debug"|"DEBUG")
+            case "${debug_mode}" in
+                "true"|"TRUE")
+                    echo "[$(current_timestamp)] DEBUG: ${2}"
+                    ;;
+                *)
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+
+function logging_info {
+    ## Take 1 positional argument.
+    ## ${1} for log message.
+    _logging "INFO" "${1}"
+}
+
+
+function logging_warning {
+    ## Take 1 positional argument.
+    ## ${1} for log message.
+    _logging "WARNING" ${1}
+}
+
+
+function logging_error {
+    ## Take 1 positional argument.
+    ## ${1} for log message.
+    ##
+    ## This function will cause the program to exit.
+    _logging "ERROR" ${1}
+}
+
+
+function logging_debug {
+    ## Take 1 positional argument.
+    ## ${1} for log message.
+    _logging "DEBUG" ${1}
+}
+###
+
+
+### Downloading functions.
+function download {
+    ## Wrap wget for desired behaviours.
+    ## Take 1 positional parameter.
+    ## ${1} for download URL
+    wget -q -xnH --cut-dirs=1 --show-progress --progress=bar ${1}
+}
+###
+
+
+### Templating functions
+#### Disk templates
+function _dt_1p_secdefault_ext4 {
+    ## Template description:
+    ##  - One partition.
+    ##  - First sector deafault (most likely 2048). Filesystem ext4.
+    ##
+    ## NOTE: This function requires sudo.
+    (echo o; \
+     echo n; echo p; echo 1; echo ; echo ;
+     echo w) \
+    | fdisk ${install_disk} > /dev/null 2>&1
+    logging_info "Formated ${install_disk} using one partition template"
+
+    mkfs.ext4 -F "${install_disk}1" > /dev/null 2>&1
+    # mkfs.ext4 -F "${install_disk}1" -O ^metadata_csum,^64bit > /dev/null 2>&1
+    mkdir -p "${mount_path}/root"
+    mount "${install_disk}1" "${mount_path}/root"
+    logging_info "Created filesystem & mounted ${1}1 to ${mount_path}/root"
+}
+
+
+function _dt_1p_sec2048_ext4 {
+    ## Template description:
+    ##  - One partition.
+    ##  - First sector 2048. Filesystem ext4.
+    ##
+    ## NOTE: This function requires sudo.
+    (echo o; \
+     echo n; echo p; echo 1; echo 2048; echo ;
+     echo w) \
+    | fdisk ${install_disk} > /dev/null 2>&1
+    logging_info "Formated ${install_disk} using one partition template"
+
+    mkfs.ext4 -F "${install_disk}1" > /dev/null 2>&1
+    mkdir -p "${mount_path}/root"
+    mount "${install_disk}1" "${mount_path}/root"
+    logging_info "Created filesystem & mounted ${1}1 to ${mount_path}/root"
+}
+
+
+function _dt_1p_sec4096_ext4 {
+    ## Template description:
+    ##  - One partition.
+    ##  - First sector 4096. Filesystem ext4.
+    ##
+    ## NOTE: This function requires sudo.
+    (echo o; \
+     echo n; echo p; echo 1; echo 4096; echo ; \
+     echo w) \
+    | fdisk ${install_disk} > /dev/null 2>&1
+    logging_info "Formated ${install_disk} using one partition template"
+
+    mkfs.ext4 -F "${install_disk}1" > /dev/null 2>&1
+    mkdir -p "${mount_path}/root"
+    mount "${install_disk}1" "${mount_path}/root"
+    logging_info "Created filesystem & mounted ${install_disk}1 to \
+`                `${mount_path}/root"
+}
+
+
+function _dt_2p_secdefault_vfat_sec100M_ext4 {
+    ## Template description:
+    ##  - Two partitions.
+    ##  - First sector default (most likely 2048). Filesystem vfat.
+    ##  - Second sector +100MB. Filesystem ext4.
+    ##
+    ## NOTE: This function requires sudo.
+    (echo o; \
+     echo n; echo p; echo 1; echo ; echo "+100M"; echo t; echo c; \
+     echo n; echo p; echo 2; echo ; echo ; \
+     echo w) \
+    | fdisk ${install_disk} > /dev/null 2>&1
+    logging_info "Formated ${install_disk} using two partitions template"
+
+    mkfs.vfat "${install_disk}1" > /dev/null 2>&1
+    mkdir -p "${mount_path}/boot"
+    mount "${install_disk}1" "${mount_path}/boot"
+    logging_info "Created filesystem & mounted ${install_disk}1 to \
+`                `${mount_path}/boot"
+
+    mkfs.ext4 -F "${install_disk}2" > /dev/null 2>&1
+    mkdir -p "${mount_path}/root"
+    mount "${install_disk}2" "${mount_path}/root"
+    logging_info "Created filesystem & mounted ${install_disk}2 to \
+`                `${mount_path}/root"
+}
+
+
+function _dt_2p_sec63_vfat16_sec100M_ext4 {
+    ## Template description:
+    ##  - Two partitions.
+    ##  - First sector 63. Filesystem vfat16.
+    ##  - Second sector +100MB. Filesystem ext4.
+    ##
+    ## NOTE: This function requires sudo.
+    (echo o; echo c; \
+     echo n; echo p; echo 1; echo 63; echo "+100M"; echo t; echo c; echo a; \
+     echo n; echo p; echo 2; echo ; echo ; \
+     echo w) \
+    | fdisk ${install_disk} > /dev/null 2>&1
+    logging_info "Formated ${install_disk} using two partitions template"
+
+    mkfs.vfat -F 16 "${install_disk}1" > /dev/null 2>&1
+    mkdir -p "${mount_path}/boot"
+    mount "${install_disk}1" "${mount_path}/boot"
+    logging_info "Created filesystem & mounted ${install_disk}1 to \
+`                `${mount_path}/boot"
+
+    mkfs.ext4 -F "${install_disk}2" > /dev/null 2>&1
+    mkdir -p "${mount_path}/root"
+    mount "${install_disk}2" "${mount_path}/root"
+    logging_info "Created filesystem & mounted ${install_disk}2 to \
+`                `${mount_path}/root"
+}
+####
+
+
+#### Post install template
+function _pit_cubieboard {
+    dd if="${img_path}/sunxi/boot/cubieboard/u-boot-sunxi-with-spl.bin" \
+        of="${install_disk}" bs=1024 seek=8 status=none
+    cp "${img_path}/sunxi/boot/cubieboard/boot.scr" "${mount_path}/root/boot/boot.scr"
+    logging_info "Set up bootloader for ${board_model}"
+    sync
+}
+
+function _pit_cubieboard2 {
+    dd if="${img_path}/sunxi/boot/cubieboard2/u-boot-sunxi-with-spl.bin" \
+        of="${install_disk}" bs=1024 seek=8 status=none
+    cp "${img_path}/sunxi/boot/cubieboard2/boot.scr" "${mount_path}/root/boot/boot.scr"
+    logging_info "Set up bootloader for ${board_model}"
+    sync
+}
+
+
+function _pit_xu4 {
+    sh ${mount_path}/root/boot/sd_fusing.sh "${install_disk}"
+    logging_info "Set up bootloader for ${board_model}"
+    sync
+}
+
+function _pit_rpi {
+    mv "${mount_path}/root/boot/*" "${mount_path}/boot/"
+    logging_info "Set up bootloader for ${board_model}"
+    sync
+}
+####
+###
+
+
+### Main logical functions.
+function prepare_env {
+    case ${board_model} in
+        "raspberry_pi")
+            export img_name="ArchLinuxARM-rpi-latest.tar.gz"
+            export disk_template="2p_secdefault_vfat_sec100M_ext4"
+            ;;
+        "cubieboard"|"cubieboard_2"|"cubietruck"|"pandaboard")
+            export img_name="ArchLinuxARM-armv7-latest.tar.gz"
+            export disk_template="1p_sec2048_ext4"
+            ;;
+        "odroid_c1")
+            export img_name="ArchLinuxARM-odroid-c1-latest.tar.gz"
+            export disk_template="1p_secdefault_ext4"
+            ;;
+        "raspberry_pi_2"|"raspberry_pi_3")
+            export img_name="ArchLinuxARM-rpi-2-latest.tar.gz"
+            export disk_template="2p_secdefault_vfat_sec100M_ext4"
+            ;;
+        "cubox_i")
+            export img_name="ArchLinuxARM-imx6-cubox-latest.tar.gz"
+            export disk_template="1p_secdefault_ext4"
+            ;;
+        "clearfog")
+            export img_name="ArchLinuxARM-clearfog-latest.tar.gz"
+            export disk_template="1p_secdefault_ext4"
+            ;;
+        "odroid_hc1"|"odroid_hc2"|"odroid_xu3"|"odroid_xu4")
+            export img_name="ArchLinuxARM-odroid-xu3-latest.tar.gz"
+            export disk_template="1p_sec4096_ext4"
+            ;;
+        "beagleboard"|"beagleboard_xm")
+            export img_name="ArchLinuxARM-armv7-latest.tar.gz"
+            export disk_template="2p_sec63_vfat16_sec100M_ext4"
+            ;;
+        "beaglebone"|"beaglebone_black"|"beaglebone_black_wireless"|\
+        "beaglebone_green"|"beaglebone_green_wireless")
+            export img_name="ArchLinuxARM-am33x-latest.tar.gz"
+            export disk_template="1p_sec2048_ext4"
+            ;;
+        "odroid_c2")
+            export img_name="ArchLinuxARM-odroid-c2-latest.tar.gz"
+            export disk_template="1p_secdefault_ext4"
+            ;;
+        *)
+            logging_error "Board model ${board_model} not supported"
+    esac
+    export img="${img_path}/${img_name}"
+}
+
+function post_install {
+    _pit_${board_model}
+    # I know, I know, metaprogramming sucks.
+
+    umount "${mount_path}/boot" > /dev/null 2>&1
+    umount "${mount_path}/root" > /dev/null 2>&1
+    rmdir "${mount_path}/boot" > /dev/null 2>&1
+    rmdir "${mount_path}/root" > /dev/null 2>&1
+    rmdir "${mount_path}" > /dev/null 2>&1
+    logging_info "Cleaned up ${mount_path}"
+}
+
+function install {
+    logging_info "Extracting ${img} to ${mount_path}/root"
+    bsdtar -xpf "${img}" -C "${mount_path}/root"
+    logging_info "Extracted ${img} to ${mount_path}/root"
+    sync
+}
+
+function format_disk {
+    ## Wipe the begining of disk with zeroes.
+    ## Then format with chosen template.
+    ##
+    ## NOTE: This function requires sudo.
+
+    dd if=/dev/zero of=${install_disk} bs=1M count=8 status=none
+    logging_info "Wiped out ${install_disk} with /dev/zero"
+
+    case ${disk_template} in
+        "1p_secdefault_ext4")
+            _dt_1p_secdefault_ext4
+            ;;
+        "1p_sec2048_ext4")
+            _dt_1p_sec2048_ext4
+            ;;
+        "1p_sec4096_ext4")
+            _dt_1p_sec4096_ext4
+            ;;
+        "2p_secdefault_vfat_sec100M_ext4")
+            _dt_2p_secdefault_vfat_sec100M_ext4
+            ;;
+        "2p_sec63_vfat16_sec100M_ext4")
+            _dt_2p_sec63_vfat16_sec100M_ext4
+            ;;
+        *)
+            logging_error "Unknown disk template ${disk_template}"
+}
+
+### Main Function.
+function main {
+    prepare_env
+    format_disk
+    install
+    post_install
+}
+
+
+main
+
+exit 0
