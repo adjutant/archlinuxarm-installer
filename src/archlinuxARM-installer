@@ -343,7 +343,9 @@ function _pit_armv7 {
 
 
 function _pit_odroid {
+    cd "${mount_path}"/root/boot/
     sh "${mount_path}"/root/boot/sd_fusing.sh "${install_disk}"
+    cd
     logging_info "Set up bootloader for ${board_model}"
     sync
 }
@@ -412,7 +414,7 @@ function prepare_env {
         "cubieboard"|"cubieboard_2"|"cubietruck"|"pcduino3")
             export img_name="ArchLinuxARM-armv7-latest.tar.gz"
                         dwnl_on_missing "${img_name}"
-export disk_template="1p_sec2048_ext4"
+            export disk_template="1p_sec2048_ext4"
             export post_install_template="armv7"
             ;;
         "odroid_c1")
