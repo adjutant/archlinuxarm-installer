@@ -19,7 +19,7 @@ function _print_help_and_exit {
 `           `Usage: archlinuxARM-installer [OPTION] \n
 `           `Options:
 `           ` -h      print out this help message
-`           ` -v      activate debug log (true/false)
+`           ` -l      select log level (debug, info, warning, error)
 `           ` -d      path to ArchLinuxARM image directory
 `           ` -b      path to block device to be installed (/dev/sdX)
 `           ` -m      board model name \n
@@ -85,7 +85,7 @@ if [ "${required_parameter_check[*]}" != "b d m" ]; then
     _print_help_and_exit
 fi
 
-`
+
 session_id=$(< /dev/urandom tr -dc 0-9 | head -c6)
 mount_path="/mnt/.alARM_install_${session_id}"
 ###
@@ -117,30 +117,32 @@ function logger {
         "error"|"ERROR")
             log_level_num=40
             ;;
+        *)
+            log_level="INFO"
+            log_level_num=20
     esac
 
     case "${1}" in
         "debug"|"DEBUG")
-            if [ ${log_level_num} <= 10 ]; then
+            if (( ${log_level_num} <= 10 )); then
                 echo "[$(current_timestamp)] DEBUG: ${2}"
             fi
             ;;
         "info"|"INFO")
-            if [ ${log_level_num} <= 20 ]; then
+            if (( ${log_level_num} <= 20 )); then
                 echo "[$(current_timestamp)] INFO: ${2}"
             fi
             ;;
         "warning"|"WARNING")
-            if [ ${log_level_num} <= 30 ]; then
+            if (( ${log_level_num} <= 30 )); then
                 echo "[$(current_timestamp)] WARNING: ${2}"
             fi
             ;;
         "error"|"ERROR")
-            if [ ${log_level_num} <= 40 ]; then
+            if (( ${log_level_num} <= 40 )); then
                 echo "[$(current_timestamp)] ERROR: ${2}"
             fi
             exit 1
-            ;;
     esac
 }
 
@@ -162,7 +164,7 @@ function logging_info {
 function logging_warning {
     ## Take 1 positional argument.
     ## ${1} for log message.
-    logger "WARNING" ${1}
+    logger "WARNING" "${1}"
 }
 
 
@@ -171,7 +173,7 @@ function logging_error {
     ## ${1} for log message.
     ##
     ## This function will cause the program to exit.
-    logger "ERROR" ${1}
+    logger "ERROR" "${1}"
 }
 ###
 
@@ -456,8 +458,9 @@ function prepare_env {
     export img="${img_path}/${img_name}"
 }
 
+
 function post_install {
-    _pit_${post_install_template}
+    _pit_"${post_install_template}"
     # I know, I know, metaprogramming sucks.
 
     umount "${mount_path}/boot" > /dev/null 2>&1
@@ -468,12 +471,14 @@ function post_install {
     logging_info "Cleaned up ${mount_path}"
 }
 
+
 function install {
     logging_debug "Extracting ${img} to ${mount_path}/root"
     bsdtar -xpf "${img}" -C "${mount_path}/root"
     logging_info "Extracted ${img} to ${mount_path}/root"
     sync
 }
+
 
 function format_disk {
     ## Wipe the begining of disk with zeroes.
@@ -502,7 +507,9 @@ function format_disk {
             ;;
         *)
             logging_error "Unknown disk template ${disk_template}"
+    esac
 }
+###
 
 ### Main Function.
 function main {
