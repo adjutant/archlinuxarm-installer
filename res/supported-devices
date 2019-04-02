@@ -1,22 +1,184 @@
-https://archlinuxarm.org/platforms/armv6/raspberry-pi
-https://archlinuxarm.org/platforms/armv7/allwinner/cubieboard
-https://archlinuxarm.org/platforms/armv7/allwinner/cubieboard-2
-https://archlinuxarm.org/platforms/armv7/allwinner/cubietruck
-https://archlinuxarm.org/platforms/armv7/amlogic/odroid-c1
-https://archlinuxarm.org/platforms/armv7/broadcom/raspberry-pi-2
-https://archlinuxarm.org/platforms/armv7/freescale/cubox-i
-https://archlinuxarm.org/platforms/armv7/marvell/clearfog
-https://archlinuxarm.org/platforms/armv7/samsung/odroid-hc1
-https://archlinuxarm.org/platforms/armv7/samsung/odroid-hc2
-https://archlinuxarm.org/platforms/armv7/samsung/odroid-xu3
-https://archlinuxarm.org/platforms/armv7/samsung/odroid-xu4
-https://archlinuxarm.org/platforms/armv7/ti/beagleboard
-https://archlinuxarm.org/platforms/armv7/ti/beagleboard-xm
-https://archlinuxarm.org/platforms/armv7/ti/beaglebone
-https://archlinuxarm.org/platforms/armv7/ti/beaglebone-black
-https://archlinuxarm.org/platforms/armv7/ti/beaglebone-black-wireless
-https://archlinuxarm.org/platforms/armv7/ti/beaglebone-green
-https://archlinuxarm.org/platforms/armv7/ti/beaglebone-green-wireless
-https://archlinuxarm.org/platforms/armv7/ti/pandaboard
-https://archlinuxarm.org/platforms/armv8/amlogic/odroid-c2
-https://archlinuxarm.org/platforms/armv8/broadcom/raspberry-pi-3
+board_name: raspberry-pi
+URL: https://archlinuxarm.org/platforms/armv6/raspberry-pi
+image_name: ArchLinuxARM-rpi-latest.tar.gz
+
+
+board_name: a10-olinuxino-lime
+URL: https://archlinuxarm.org/platforms/armv7/allwinner/a10-olinuxino-lime
+image_name: ArchLinuxARM-armv7-latest.tar.gz
+boot_file: sunxi/boot/a10-olinuxino-lime/boot.scr
+boot_file: sunxi/boot/a10-olinuxino-lime/u-boot-sunxi-with-spl.bin
+
+
+board_name: a20-olinuxino-lime
+URL: https://archlinuxarm.org/platforms/armv7/allwinner/a20-olinuxino-lime
+image_name: ArchLinuxARM-armv7-latest.tar.gz
+boot_file: sunxi/boot/a20-olinuxino-lime/boot.scr
+boot_file: sunxi/boot/a20-olinuxino-lime/u-boot-sunxi-with-spl.bin
+
+
+board_name: a20-olinuxino-lime2
+URL: https://archlinuxarm.org/platforms/armv7/allwinner/a20-olinuxino-lime2
+image_name: ArchLinuxARM-armv7-latest.tar.gz
+boot_file: sunxi/boot/a20-olinuxino-lime2/boot.scr
+boot_file: sunxi/boot/a20-olinuxino-lime2/u-boot-sunxi-with-spl.bin
+
+
+board_name: a20-olinuxino-micro
+URL: https://archlinuxarm.org/platforms/armv7/allwinner/a20-olinuxino-micro
+image_name: ArchLinuxARM-armv7-latest.tar.gz
+boot_file: sunxi/boot/a20-olinuxino-micro/boot.scr
+boot_file: sunxi/boot/a20-olinuxino-micro/u-boot-sunxi-with-spl.bin
+
+
+board_name: cubieboard
+URL: https://archlinuxarm.org/platforms/armv7/allwinner/cubieboard
+image_name: ArchLinuxARM-armv7-latest.tar.gz
+boot_file: sunxi/boot/cubieboard/boot.scr
+boot_file: sunxi/boot/cubieboard/u-boot-sunxi-with-spl.bin
+
+
+board_name: cubieboard-2
+URL: https://archlinuxarm.org/platforms/armv7/allwinner/cubieboard-2
+image_name: ArchLinuxARM-armv7-latest.tar.gz
+boot_file: sunxi/boot/cubieboard2/boot.scr
+boot_file: sunxi/boot/cubieboard2/u-boot-sunxi-with-spl.bin
+
+
+board_name: cubietruck
+URL: https://archlinuxarm.org/platforms/armv7/allwinner/cubietruck
+image_name: ArchLinuxARM-armv7-latest.tar.gz
+boot_file: sunxi/boot/cubietruck/boot.scr
+boot_file: sunxi/boot/cubietruck/u-boot-sunxi-with-spl.bin
+
+
+board_name: pcduino3
+URL: https://archlinuxarm.org/platforms/armv7/allwinner/pcduino3
+image_name: ArchLinuxARM-armv7-latest.tar.gz
+boot_file: sunxi/boot/pcduino3/boot.scr
+boot_file: sunxi/boot/pcduino3/u-boot-sunxi-with-spl.bin
+
+
+board_name: odroid-c1
+URL: https://archlinuxarm.org/platforms/armv7/amlogic/odroid-c1
+image_name: ArchLinuxARM-odroid-c1-latest.tar.gz
+
+
+board_name: raspberry-pi-2
+URL: https://archlinuxarm.org/platforms/armv7/broadcom/raspberry-pi-2
+image_name: ArchLinuxARM-rpi-2-latest.tar.gz
+
+
+board_name: cubox-i
+URL: https://archlinuxarm.org/platforms/armv7/freescale/cubox-i
+image_name: ArchLinuxARM-imx6-cubox-latest.tar.gz
+
+
+board_name: clearfog
+URL: https://archlinuxarm.org/platforms/armv7/marvell/clearfog
+image_name: ArchLinuxARM-clearfog-latest.tar.gz
+
+
+board_name: odroid-hc1
+URL: https://archlinuxarm.org/platforms/armv7/samsung/odroid-hc1
+image_name: ArchLinuxARM-odroid-xu3-latest.tar.gz
+
+
+board_name: odroid-hc2
+URL: https://archlinuxarm.org/platforms/armv7/samsung/odroid-hc2
+image_name: ArchLinuxARM-odroid-xu3-latest.tar.gz
+
+
+board_name: odroid-u2
+URL: https://archlinuxarm.org/platforms/armv7/samsung/odroid-u2
+image_name: ArchLinuxARM-odroid-latest.tar.gz
+
+
+board_name: odroid-u3
+URL: https://archlinuxarm.org/platforms/armv7/samsung/odroid-u3
+image_name: ArchLinuxARM-odroid-latest.tar.gz
+
+
+board_name: odroid-x
+URL: https://archlinuxarm.org/platforms/armv7/samsung/odroid-x
+image_name: ArchLinuxARM-odroid-x-latest.tar.gz
+
+
+board_name: odroid-x2
+URL: https://archlinuxarm.org/platforms/armv7/samsung/odroid-x2
+image_name: ArchLinuxARM-odroid-latest.tar.gz
+
+
+board_name: odroid-xu
+URL: https://archlinuxarm.org/platforms/armv7/samsung/odroid-xu
+image_name: ArchLinuxARM-odroid-xu-latest.tar.gz
+boot_file: exynos/xuboot.img
+
+
+board_name: odroid-xu3
+URL: https://archlinuxarm.org/platforms/armv7/samsung/odroid-xu3
+image_name: ArchLinuxARM-odroid-xu3-latest.tar.gz
+
+
+board_name: odroid-xu4
+URL: https://archlinuxarm.org/platforms/armv7/samsung/odroid-xu4
+image_name: ArchLinuxARM-odroid-xu3-latest.tar.gz
+
+
+board_name: beagleboard
+URL: https://archlinuxarm.org/platforms/armv7/ti/beagleboard
+image_name: ArchLinuxARM-armv7-latest.tar.gz
+boot_file: omap/boot/beagleboard/MLO
+boot_file: omap/boot/beagleboard/u-boot.img
+
+
+board_name: beagleboard-xm
+URL: https://archlinuxarm.org/platforms/armv7/ti/beagleboard-xm
+image_name: ArchLinuxARM-armv7-latest.tar.gz
+boot_file: omap/boot/beagleboard/MLO
+boot_file: omap/boot/beagleboard/u-boot.img
+
+
+board_name: beaglebone
+URL: https://archlinuxarm.org/platforms/armv7/ti/beaglebone
+image_name: ArchLinuxARM-am33x-latest.tar.gz
+
+
+board_name: beaglebone-black
+URL: https://archlinuxarm.org/platforms/armv7/ti/beaglebone-black
+image_name: ArchLinuxARM-am33x-latest.tar.gz
+
+
+board_name: beaglebone-black-wireless
+URL: https://archlinuxarm.org/platforms/armv7/ti/beaglebone-black-wireless
+image_name: ArchLinuxARM-am33x-latest.tar.gz
+
+
+board_name: beaglebone-green
+URL: https://archlinuxarm.org/platforms/armv7/ti/beaglebone-green
+image_name: ArchLinuxARM-am33x-latest.tar.gz
+
+
+board_name: beaglebone-green-wireless
+URL: https://archlinuxarm.org/platforms/armv7/ti/beaglebone-green-wireless
+image_name: ArchLinuxARM-am33x-latest.tar.gz
+
+
+board_name: pandaboard
+URL: https://archlinuxarm.org/platforms/armv7/ti/pandaboard
+image_name: ArchLinuxARM-armv7-latest.tar.gz
+boot_file: omap/boot/pandaboard/boot.scr
+boot_file: omap/boot/pandaboard/MLO
+boot_file: omap/boot/pandaboard/u-boot.img
+
+
+board_name: odroid-c2
+URL: https://archlinuxarm.org/platforms/armv8/amlogic/odroid-c2
+image_name: ArchLinuxARM-odroid-c2-latest.tar.gz
+
+
+board_name: raspberry-pi-3
+URL: https://archlinuxarm.org/platforms/armv8/broadcom/raspberry-pi-3
+image_name: ArchLinuxARM-rpi-2-latest.tar.gz
+
+
