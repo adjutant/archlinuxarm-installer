@@ -12,7 +12,7 @@
 ### Sessions init and arguments capture.
 # Very weird Bash structure here for getopts.  Keep as-is.  No touchy.
 function _print_help_and_exit {
-    echo -e "archlinuxARM-installer version 0.2 \n
+    echo -e "archlinuxARM-installer version 1.0 \n
 `           `archlinuxARM-installer is the tool to install ArchLinuxARM \
 `           `automatically \non supported devices.  It was designed primarily \
 `           `to assist with the \ninstallation of ARM clusters. \n
@@ -179,13 +179,26 @@ function logging_error {
 
 
 ### Downloading functions.
-function download {
+function dwnl {
     ## Wrap wget for desired behaviours.
     ## Take 1 positional parameter.
     ## ${1} for download URL *suffix*.
     url_prefix="http://os.archlinuxarm.org/os"
     url="${url_prefix}/${1}"
-    wget -q -xnH --cut-dirs=1 --show-progress --progress=bar "${url}"
+    logging_warning "Downloading from ${url}"
+    wget -q -xnH --cut-dirs=1 --show-progress --progress=bar \
+        "${url}" -P "${img_path}"
+}
+
+
+function dwnl_on_missing {
+    ## Wrap wget for desired behaviours.
+    ## Take 1 positional parameter.
+    ## ${1} for file to check for existence.
+    if [ ! -e "${img_path}/${1}" ]; then
+        logging_warning "File ${1} not found in ${img_path}"
+        dwnl "${1}"
+    fi
 }
 ###
 
@@ -318,6 +331,8 @@ function _pit_raspberry_pi {
 
 
 function _pit_armv7 {
+    dwnl_on_missing "sunxi/boot/${board_model}/u-boot-sunxi-with-spl.bin"
+    dwnl_on_missing "sunxi/boot/${board_model}/boot.scr"
     dd if="${img_path}/sunxi/boot/${board_model}/u-boot-sunxi-with-spl.bin" \
         of="${install_disk}" bs=1024 seek=8 status=none
     cp "${img_path}/sunxi/boot/${board_model}/boot.scr" \
@@ -343,6 +358,8 @@ function _pit_cubox_i {
 
 
 function _pit_beagleboard {
+    dwnl_on_missing "omap/boot/beagleboard/MLO"
+    dwnl_on_missing "omap/boot/beagleboard/u-boot.img"
     mv "${mount_path}"/root/boot/* "${mount_path}/boot/"
     cp "${img_path}"/omap/boot/beagleboard/MLO \
        "${img_path}"/omap/boot/beagleboard/u-boot.img "${mount_path}/boot/"
@@ -353,6 +370,8 @@ function _pit_beagleboard {
 
 
 function _pit_beaglebone {
+    dwnl_on_missing "root/boot/MLO"
+    dwnl_on_missing "root/boot/u-boot.img"
     dd if="${mount_path}"root/boot/MLO \
         of="${install_disk}" count=1 seek=1 conv=notrunc bs=128k
     dd if="${mount_path}"root/boot/u-boot.img \
@@ -363,6 +382,9 @@ function _pit_beaglebone {
 
 
 function _pit_pandaboard {
+    dwnl_on_missing "omap/boot/pandaboard/MLO"
+    dwnl_on_missing "omap/boot/pandaboard/u-boot.img"
+    dwnl_on_missing "omap/boot/pandaboard/boot.scr"
     dd if="${img_path}"/omap/boot/pandaboard/MLO \
         of="${install_disk}" count=1 seek=1 conv=notrunc bs=128k
     dd if="${img_path}"/omap/boot/pandaboard/u-boot.img \
@@ -381,6 +403,7 @@ function prepare_env {
     case ${board_model} in
         "raspberry_pi")
             export img_name="ArchLinuxARM-rpi-latest.tar.gz"
+            dwnl_on_missing "${img_name}"
             export disk_template="2p_secdefault_vfat_sec100M_ext4"
             export post_install_template="raspberry_pi"
             ;;
@@ -388,67 +411,80 @@ function prepare_env {
         "a20_olinuxino_lime2"|"a20_olinuxino_micro"|\
         "cubieboard"|"cubieboard_2"|"cubietruck"|"pcduino3")
             export img_name="ArchLinuxARM-armv7-latest.tar.gz"
-            export disk_template="1p_sec2048_ext4"
+                        dwnl_on_missing "${img_name}"
+export disk_template="1p_sec2048_ext4"
             export post_install_template="armv7"
             ;;
         "odroid_c1")
             export img_name="ArchLinuxARM-odroid-c1-latest.tar.gz"
+            dwnl_on_missing "${img_name}"
             export disk_template="1p_secdefault_ext4"
             export post_install_template="odroid"
             ;;
         "raspberry_pi_2"|"raspberry_pi_3")
             export img_name="ArchLinuxARM-rpi-2-latest.tar.gz"
+            dwnl_on_missing "${img_name}"
             export disk_template="2p_secdefault_vfat_sec100M_ext4"
             export post_install_template="raspberry_pi"
             ;;
         "cubox_i")
             export img_name="ArchLinuxARM-imx6-cubox-latest.tar.gz"
+            dwnl_on_missing "${img_name}"
             export disk_template="1p_secdefault_ext4"
             export post_install_template="cubox_i"
             ;;
         "clearfog")
             export img_name="ArchLinuxARM-clearfog-latest.tar.gz"
+            dwnl_on_missing "${img_name}"
             export disk_template="1p_secdefault_ext4"
             export post_install_template="odroid"
             ;;
         "odroid_u2"|"odroid_u3"|"odroid_x2")
             export img_name="ArchLinuxARM-odroid-latest.tar.gz"
+            dwnl_on_missing "${img_name}"
             export disk_template="1p_sec4096_ext4"
             export post_install_template="odroid"
             ;;
         "odroid_x")
             export img_name="ArchLinuxARM-odroid-x-latest.tar.gz"
+            dwnl_on_missing "${img_name}"
             export disk_template="1p_sec4096_ext4"
             export post_install_template="odroid"
             ;;
         "odroid_hc1"|"odroid_hc2"|"odroid_xu3"|"odroid_xu4")
             export img_name="ArchLinuxARM-odroid-xu3-latest.tar.gz"
+            dwnl_on_missing "${img_name}"
             export disk_template="1p_sec4096_ext4"
             export post_install_template="odroid"
             ;;
         "odroid_xu")
             export img_name="ArchLinuxARM-odroid-xu3-latest.tar.gz"
+            dwnl_on_missing "${img_name}"
             export disk_template="1p_sec4096_ext4"
             export post_install_template="raspberry_pi"
             ;;
         "beagleboard"|"beagleboard_xm")
             export img_name="ArchLinuxARM-armv7-latest.tar.gz"
+            dwnl_on_missing "${img_name}"
             export disk_template="2p_sec63_vfat16_sec100M_ext4"
             export post_install_template="beagleboard"
             ;;
         "beaglebone"|"beaglebone_black"|"beaglebone_black_wireless"|\
         "beaglebone_green"|"beaglebone_green_wireless")
             export img_name="ArchLinuxARM-am33x-latest.tar.gz"
+            dwnl_on_missing "${img_name}"
             export disk_template="1p_sec2048_ext4"
             export post_install_template="beaglebone"
             ;;
         "odroid_c2")
             export img_name="ArchLinuxARM-odroid-c2-latest.tar.gz"
+            dwnl_on_missing "${img_name}"
             export disk_template="1p_secdefault_ext4"
             export post_install_template="odroid"
             ;;
         "pandaboard")
             export img_name="ArchLinuxARM-armv7-latest.tar.gz"
+            dwnl_on_missing "${img_name}"
             export disk_template="1p_sec2048_ext4"
             export post_install_template="pandaboard"
             ;;
